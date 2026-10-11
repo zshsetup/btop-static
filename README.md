@@ -1,12 +1,15 @@
 # btop-static
 
 Portable builds of [btop++](https://github.com/aristocratos/btop), the resource monitor, for macOS on Apple
-silicon, which the release of btop has no build for (its Linux builds are used by the pmg spec), built with [zig](https://ziglang.org) as the C toolchain.
+silicon, which the releases of btop have no build for, built with [zig](https://ziglang.org) as the C toolchain.
 
 - Linux glibc: only glibc is linked dynamically, and only symbols up to glibc 2.17, so the
   binaries run on anything from CentOS 7 onwards
 - Linux musl (`--static`): fully static, no runtime dependencies at all (e.g. Alpine)
 - macOS: only libSystem is dynamic (it ships with macOS, which has no fully static binaries)
+
+Unlike the other builds of this org it uses the C++ compiler of Xcode instead of zig, as the
+libc++ of zig does not build btop.
 
 ## Prerequisites
 

@@ -75,6 +75,7 @@ export RANLIB="zig ranlib"
 [ "$OS" = Linux ] && export LD="zig ld.lld"
 LDSTATIC=""
 [ "$STATIC" = 1 ] && LDSTATIC="-static"
+export LDSTATIC
 
 if [ "$CLEAN" = 1 ]; then
   echo ">>> cleaning $WORK and $DIST"
@@ -101,8 +102,9 @@ prepare btop
 echo ">>> btop"
 (
   cd btop
-  # the platform is given, as zig reports a triple that the Makefile does not know
-  "$MAKE" -j"$JOBS" CXX="$CXX" PLATFORM=macos ARCH=arm64 STATIC=true STRIP=true GPU_SUPPORT=true
+  # the C++ compiler of Xcode, as the libc++ of zig 0.15 has both std::unexpected, the class and the
+  # removed function, which btop names; the build still links only the libraries of macOS
+  "$MAKE" -j"$JOBS" CXX=c++ PLATFORM=macos ARCH=arm64 STATIC=true STRIP=true GPU_SUPPORT=true
   rm -rf "$DIST"
   mkdir -p "$DIST/bin" "$DIST/share/btop"
   cp bin/btop "$DIST/bin/btop"
