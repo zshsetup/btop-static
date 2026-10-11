@@ -1,0 +1,16 @@
+The code in this repository (build.sh, tests/, README.md) is licensed under the MIT License;
+see LICENSE.
+
+The btop binaries produced by build.sh and published under GitHub Releases embed or are built
+from the following third-party projects, vendored unmodified as git submodules under vendor/ at
+their release tags. Each keeps its own license, and the binaries are governed by the licenses of
+these projects, not by the MIT License above.
+
+btop++
+  https://github.com/aristocratos/btop
+  Copyright (c) Jakob P. Liljenberg (aristocratos) and contributors
+  License: Apache License 2.0
+
+Anyone who redistributes these binaries (including the release archives from this repo) must
+satisfy these licenses, such as keeping their notices attached. The release workflow attaches the
+exact vendored sources used for the build (btop-static-sources.tar.gz) to every release.

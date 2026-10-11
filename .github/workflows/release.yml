@@ -1,0 +1,57 @@
+name: Release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: write
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check that the release tag matches VERSION, the tag checked out in vendor/btop
+        run: |
+          if [ "$(cat VERSION)" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Release tag $GITHUB_REF_NAME does not match VERSION ($(cat VERSION))"
+            exit 1
+          fi
+  build:
+    needs: check-version
+    strategy:
+      matrix:
+        include:
+          - os: macos-15
+            asset: macos-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - run: .github/scripts/fetch-submodules.sh
+      - uses: mlugg/setup-zig@v2.2.1
+        with:
+          version: 0.15.2
+      - run: ./build.sh
+      - name: Package btop
+        run: |
+          dist=dist
+          tar -czf btop-static-${{ matrix.asset }}.tar.gz -C "$dist" bin share
+      - name: Collect sources
+        if: matrix.asset == 'macos-arm64'
+        run: tar -czf btop-static-sources.tar.gz --exclude=.git vendor
+      - uses: actions/upload-artifact@v7
+        with:
+          name: btop-static-${{ matrix.asset }}
+          path: btop-static-*.tar.gz
+          retention-days: 1
+  release:
+    name: Upload to GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: btop-static-*
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
