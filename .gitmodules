@@ -1,4 +1,4 @@
 [submodule "vendor/btop"]
     path = vendor/btop
     url = https://github.com/aristocratos/btop.git
-	shallow = true
+    shallow = true
